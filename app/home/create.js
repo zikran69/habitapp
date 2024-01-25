@@ -1,4 +1,5 @@
 import {
+  Alert,
   Pressable,
   StyleSheet,
   Text,
@@ -6,14 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import axios from "axios";
 
 const create = () => {
+  const [selectedColor, setSelectedColor] = useState("");
+
+  const [title, setTitle] = useState("");
+
   const color = [
     "#ff6b61", //red
-    "#faff61", //yellow
+    "#e8e83a", //yellow
     "#9bff61", //green
     "#61abff", //blue
     "#00ffc3", //cyan
@@ -22,6 +29,30 @@ const create = () => {
 
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+  //tarik data buat backend dari sini
+  async function addHabit() {
+    try {
+      const habitDetails = {
+        title: title,
+        color: selectedColor,
+        repeatMode: "Daily",
+        reminder: true,
+      };
+
+      const response = await axios.post(
+        "http://192.168.100.14:3000/habits",
+        habitDetails,
+      );
+      if (response.status === 200) {
+        setTitle("");
+        Alert.alert("Habit added successfully", "Enjoy your journey");
+      }
+      console.log("habit added", response);
+    } catch (error) {
+      console.log("error adding a habit", error);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Ionicons name="arrow-back-circle-outline" size={30} color="black" />
@@ -29,14 +60,28 @@ const create = () => {
       <Text style={styles.createText}>
         Create <Text style={styles.habitText}>Habit</Text>
       </Text>
-      <TextInput style={styles.titleInput} placeholder="Title" />
+      <TextInput
+        value={title}
+        onChangeText={(text) => setTitle(text)}
+        style={styles.titleInput}
+        placeholder="Title"
+      />
 
       <View style={styles.bodyCreate}>
         <Text style={styles.colorText}>Color</Text>
         <View style={styles.colorContainer}>
           {color?.map((item, index) => (
-            <TouchableOpacity key={index} activeOpacity={0.5}>
-              <FontAwesome name="circle" size={30} color={item} />
+            <TouchableOpacity
+              onPress={() => setSelectedColor(item)}
+              key={index}
+              activeOpacity={0.5}
+            >
+              {/* mengubah bentuk tampilan warna saat di click */}
+              {selectedColor === item ? (
+                <AntDesign name="plussquare" size={30} color={item} />
+              ) : (
+                <FontAwesome name="circle" size={30} color={item} />
+              )}
             </TouchableOpacity>
           ))}
         </View>
@@ -76,7 +121,7 @@ const create = () => {
         </Text>
       </View>
 
-      <Pressable style={styles.pressSave}>
+      <Pressable onPress={addHabit} style={styles.pressSave}>
         <Text
           style={{ textAlign: "center", color: "white", fontWeight: "bold" }}
         >
