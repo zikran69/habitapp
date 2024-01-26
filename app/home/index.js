@@ -11,11 +11,22 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import axios from "axios";
+import { BottomModal, ModalTitle, SlideAnimation } from "react-native-modals";
+import { ModalContent } from "react-native-modals";
+import {
+  Ionicons,
+  Octicons,
+  Feather,
+  EvilIcons,
+  AntDesign,
+} from "@expo/vector-icons";
 
 const index = () => {
   const [option, setOption] = useState("Today");
   const router = useRouter();
   const [habits, setHabits] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   useEffect(() => {
     fetchHabits();
   }, []);
@@ -31,145 +42,231 @@ const index = () => {
   console.log("habits", habits);
 
   return (
-    <ScrollView style={styles.ScrollView}>
-      <View style={styles.uperNav}>
-        <FontAwesome5 name="clipboard-list" size={30} color="black" />
-        <FontAwesome
-          onPress={() => router.push("/home/create")}
-          name="plus-circle"
-          size={30}
-          color="black"
-        />
-      </View>
-
-      <Text style={styles.habitText}>Habits</Text>
-
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-          marginVertical: 8,
-        }}
-      >
-        <Pressable
-          onPress={() => setOption("Today")}
-          style={{
-            backgroundColor: option == "Today" ? "#E0FFFF" : "transparent",
-            paddingHorizontal: 10,
-            paddingVertical: 8,
-            borderRadius: 25,
-          }}
-        >
-          <Text style={{ textAlign: "center", color: "black", fontSize: 15 }}>
-            Today
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setOption("Weekly")}
-          style={{
-            backgroundColor: option == "Weekly" ? "#E0FFFF" : "transparent",
-            paddingHorizontal: 10,
-            paddingVertical: 8,
-            borderRadius: 25,
-          }}
-        >
-          <Text style={{ textAlign: "center", color: "black", fontSize: 15 }}>
-            Weekly
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setOption("Overall")}
-          style={{
-            backgroundColor: option == "Overall" ? "#E0FFFF" : "transparent",
-            paddingHorizontal: 10,
-            paddingVertical: 8,
-            borderRadius: 25,
-          }}
-        >
-          <Text style={{ textAlign: "center", color: "black", fontSize: 15 }}>
-            Overall
-          </Text>
-        </Pressable>
-      </View>
-
-      {option == "Today" && habits?.length > 0 ? (
-        <View>
-          {habits?.map((item, index) => (
-            <Pressable
-              key={index}
-              style={{
-                marginVertical: 10,
-                backgroundColor: item?.color,
-                padding: 12,
-                borderRadius: 24,
-              }}
-            >
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontWeight: "500",
-                  color: "white",
-                }}
-              >
-                {item?.title}
-              </Text>
-            </Pressable>
-          ))}
+    <>
+      <ScrollView style={styles.ScrollView}>
+        <View style={styles.uperNav}>
+          <FontAwesome5 name="clipboard-list" size={30} color="black" />
+          <FontAwesome
+            onPress={() => router.push("/home/create")}
+            name="plus-circle"
+            size={30}
+            color="black"
+          />
         </View>
-      ) : (
+
+        <Text style={styles.habitText}>Habits</Text>
+
         <View
           style={{
-            marginTop: 150,
-            justifyContent: "center",
+            flexDirection: "row",
             alignItems: "center",
-            marginBottom: "auto",
+            gap: 10,
+            marginVertical: 8,
           }}
         >
-          <Image
-            style={{ width: 60, height: 60, resizeMode: "cover" }}
-            source={{
-              uri: "https://www.svgrepo.com/show/489659/empty-box.svg",
-            }}
-          />
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: 20,
-              fontWeight: "600",
-              marginTop: 10,
-            }}
-          >
-            No Habits for today
-          </Text>
-
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: 20,
-              fontWeight: "600",
-              marginTop: 10,
-            }}
-          >
-            No Habits for today.Create one?
-          </Text>
-
           <Pressable
-            onPress={() => router.push("/home/create")}
-            styles={{
-              backgroundColor: "#0071c5",
-              marginTop: 20,
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-              marginLeft: "auto",
-              marginRight: "auto",
+            onPress={() => setOption("Today")}
+            style={{
+              backgroundColor: option == "Today" ? "#E0FFFF" : "transparent",
+              paddingHorizontal: 10,
+              paddingVertical: 8,
+              borderRadius: 25,
             }}
           >
-            <Text>Create</Text>
+            <Text style={{ textAlign: "center", color: "black", fontSize: 15 }}>
+              Today
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setOption("Weekly")}
+            style={{
+              backgroundColor: option == "Weekly" ? "#E0FFFF" : "transparent",
+              paddingHorizontal: 10,
+              paddingVertical: 8,
+              borderRadius: 25,
+            }}
+          >
+            <Text style={{ textAlign: "center", color: "black", fontSize: 15 }}>
+              Weekly
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setOption("Overall")}
+            style={{
+              backgroundColor: option == "Overall" ? "#E0FFFF" : "transparent",
+              paddingHorizontal: 10,
+              paddingVertical: 8,
+              borderRadius: 25,
+            }}
+          >
+            <Text style={{ textAlign: "center", color: "black", fontSize: 15 }}>
+              Overall
+            </Text>
           </Pressable>
         </View>
-      )}
-    </ScrollView>
+
+        {option == "Today" && habits?.length > 0 ? (
+          <View>
+            {habits?.map((item, index) => (
+              <Pressable
+                onLongPress={() => setIsModalVisible(!isModalVisible)}
+                key={index}
+                style={{
+                  marginVertical: 10,
+                  backgroundColor: item?.color,
+                  padding: 12,
+                  borderRadius: 24,
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "500",
+                    color: "white",
+                  }}
+                >
+                  {item?.title}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : (
+          <View
+            style={{
+              marginTop: 150,
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "auto",
+            }}
+          >
+            <Image
+              style={{ width: 60, height: 60, resizeMode: "cover" }}
+              source={{
+                uri: "https://www.svgrepo.com/show/489659/empty-box.svg",
+              }}
+            />
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 20,
+                fontWeight: "600",
+                marginTop: 10,
+              }}
+            >
+              No Habits for today
+            </Text>
+
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 20,
+                fontWeight: "600",
+                marginTop: 10,
+              }}
+            >
+              No Habits for today.Create one?
+            </Text>
+
+            <Pressable
+              onPress={() => router.push("/home/create")}
+              styles={{
+                backgroundColor: "#0071c5",
+                marginTop: 20,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
+              <Text>Create</Text>
+            </Pressable>
+          </View>
+        )}
+      </ScrollView>
+
+      <BottomModal
+        onBackdropPress={() => setIsModalVisible(!isModalVisible)}
+        onHardwareBackPress={() => setIsModalVisible(!isModalVisible)}
+        swipeDirection={["up", "down"]}
+        swipeThreshold={200}
+        modalTitle={<ModalTitle title="Choose Option" />}
+        modalAnimation={
+          new SlideAnimation({
+            slideFrom: "bottom",
+          })
+        }
+        visible={isModalVisible}
+        onTouchOutside={() => setIsModalVisible(!isModalVisible)}
+      >
+        <ModalContent
+          style={{
+            width: "100%",
+            height: 280,
+          }}
+        >
+          <View style={{ marginVertical: 10 }}>
+            <Text>Option</Text>
+            <Pressable
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                marginTop: 10,
+              }}
+            >
+              <Ionicons name="checkmark-circle" size={30} color="#00bf03" />
+              <Text style={{ fontSize: 15, fontWeight: "500" }}>Completed</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                marginTop: 10,
+              }}
+            >
+              <Octicons name="skip" size={30} color="#eded07" />
+              <Text style={{ fontSize: 15, fontWeight: "500" }}>Skip</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                marginTop: 12,
+              }}
+            >
+              <Feather name="edit-2" size={24} color="black" />
+              <Text style={{ fontSize: 15, fontWeight: "500" }}>Edit</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                marginTop: 12,
+              }}
+            >
+              <EvilIcons name="archive" size={27} color="black" />
+              <Text style={{ fontSize: 15, fontWeight: "500" }}>Archive</Text>
+            </Pressable>
+
+            <Pressable
+              // onPress={deleteHabit}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                marginTop: 12,
+              }}
+            >
+              <AntDesign name="delete" size={24} color="#e30505" />
+              <Text style={{ fontSize: 15, fontWeight: "500" }}>Delete</Text>
+            </Pressable>
+          </View>
+        </ModalContent>
+      </BottomModal>
+    </>
   );
 };
 
