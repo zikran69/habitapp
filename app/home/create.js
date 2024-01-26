@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
+import { router } from "expo-router";
 
 const create = () => {
   const [selectedColor, setSelectedColor] = useState("");
@@ -55,7 +56,12 @@ const create = () => {
 
   return (
     <View style={styles.container}>
-      <Ionicons name="arrow-back-circle-outline" size={30} color="black" />
+      <Ionicons
+        onPress={() => router.back()}
+        name="arrow-back-circle-outline"
+        size={30}
+        color="black"
+      />
 
       <Text style={styles.createText}>
         Create <Text style={styles.habitText}>Habit</Text>

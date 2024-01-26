@@ -76,3 +76,24 @@ app.put("/habits/:habitId/completed/:day", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+app.put("/habits/:habitId/completed", async (req, res) => {
+  const habitId = req.params.habitId;
+  const updatedCompletion = req.body.completed; // this for updated completed object of habits by id
+
+  try {
+    const updatedHabit = await Habit.findByIdAndUpdate(
+      habitId,
+      { completed: updatedCompletion },
+      { new: true },
+    );
+
+    if (!updatedHabit) {
+      return res.status(404).json({ error: "Habit not found" });
+    }
+
+    return res.status(200).json(updatedHabit);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});

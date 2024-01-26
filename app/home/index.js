@@ -26,6 +26,19 @@ const index = () => {
   const router = useRouter();
   const [habits, setHabits] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState();
+
+  //inisialize current day for update habit where selected
+  const currentDay = new Date() //this will give you a date & time of EPOCH format
+
+    //so we convert that EPOCH format to normal format like this:
+    .toDateString("en-US", { weekday: "short" })
+    .slice(0, 3); //---> this will formated day to be : "Sun", "Mon", "Tue" (3 first word)
+  console.log(currentDay);
+
+  useEffect(() => {
+    fetchHabits();
+  }, []);
 
   useEffect(() => {
     fetchHabits();
@@ -39,7 +52,40 @@ const index = () => {
       console.log("error fetching habits", error);
     }
   };
-  console.log("habits", habits);
+
+  const handleLongPress = (habitId) => {
+    const selectedHabit = habits?.find((habit) => habit._id == habitId);
+    setSelectedHabit(selectedHabit);
+    setIsModalVisible(true);
+  };
+
+  const handleCompletion = async () => {
+    try {
+      const habitId = selectedHabit?._id;
+      const updatedCompletion = {
+        ...selectedHabit?.completed,
+        [currentDay]: true,
+      };
+
+      await axios.put(
+        `http://192.168.100.14:3000/habits/${habitId}/completed`,
+        {
+          completed: updatedCompletion,
+        },
+      );
+
+      await fetchHabits();
+
+      setIsModalVisible(false);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const filteredHabits = habits?.filter((habit) => {
+    //filter habits for habit not completed "and or" habits not completed on current day
+    return !habit.completed || !habit.completed[currentDay];
+  });
 
   return (
     <>
@@ -67,7 +113,7 @@ const index = () => {
           <Pressable
             onPress={() => setOption("Today")}
             style={{
-              backgroundColor: option == "Today" ? "#E0FFFF" : "transparent",
+              backgroundColor: option == "Today" ? "#62e3fc" : "transparent",
               paddingHorizontal: 10,
               paddingVertical: 8,
               borderRadius: 25,
@@ -80,7 +126,7 @@ const index = () => {
           <Pressable
             onPress={() => setOption("Weekly")}
             style={{
-              backgroundColor: option == "Weekly" ? "#E0FFFF" : "transparent",
+              backgroundColor: option == "Weekly" ? "#62e3fc" : "transparent",
               paddingHorizontal: 10,
               paddingVertical: 8,
               borderRadius: 25,
@@ -93,7 +139,7 @@ const index = () => {
           <Pressable
             onPress={() => setOption("Overall")}
             style={{
-              backgroundColor: option == "Overall" ? "#E0FFFF" : "transparent",
+              backgroundColor: option == "Overall" ? "#62e3fc" : "transparent",
               paddingHorizontal: 10,
               paddingVertical: 8,
               borderRadius: 25,
@@ -105,11 +151,13 @@ const index = () => {
           </Pressable>
         </View>
 
-        {option == "Today" && habits?.length > 0 ? (
+        {/* maping habit that we fetch from db */}
+
+        {option == "Today" && filteredHabits?.length > 0 ? (
           <View>
-            {habits?.map((item, index) => (
+            {filteredHabits?.map((item, index) => (
               <Pressable
-                onLongPress={() => setIsModalVisible(!isModalVisible)}
+                onLongPress={() => handleLongPress(item._id)}
                 key={index}
                 style={{
                   marginVertical: 10,
@@ -122,7 +170,8 @@ const index = () => {
                   style={{
                     textAlign: "center",
                     fontWeight: "500",
-                    color: "white",
+                    color: "black",
+                    fontSize: 18,
                   }}
                 >
                   {item?.title}
@@ -140,10 +189,8 @@ const index = () => {
             }}
           >
             <Image
-              style={{ width: 60, height: 60, resizeMode: "cover" }}
-              source={{
-                uri: "https://www.svgrepo.com/show/489659/empty-box.svg",
-              }}
+              style={{ width: 100, height: 100, resizeMode: "cover" }}
+              source={require("../../assets/empty.png")}
             />
             <Text
               style={{
@@ -161,10 +208,10 @@ const index = () => {
                 textAlign: "center",
                 fontSize: 20,
                 fontWeight: "600",
-                marginTop: 10,
+                marginTop: 20,
               }}
             >
-              No Habits for today.Create one?
+              Create one?
             </Text>
 
             <Pressable
@@ -178,7 +225,16 @@ const index = () => {
                 marginRight: "auto",
               }}
             >
-              <Text>Create</Text>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  marginTop: 20,
+                  color: "#0071c5",
+                }}
+              >
+                Create
+              </Text>
             </Pressable>
           </View>
         )}
@@ -207,6 +263,7 @@ const index = () => {
           <View style={{ marginVertical: 10 }}>
             <Text>Option</Text>
             <Pressable
+              onPress={handleCompletion}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
