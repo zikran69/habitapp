@@ -108,6 +108,14 @@ const index = () => {
     }
   };
 
+  const getCompletedDays = (completedObj) => {
+    if (completedObj && typeof completedObj === "object") {
+      return Object.keys(completedObj).filter((day) => completedObj[day]);
+    }
+
+    return [];
+  };
+
   return (
     <>
       <ScrollView style={styles.ScrollView}>
@@ -328,6 +336,49 @@ const index = () => {
                   })}
                 </View>
               </Pressable>
+            ))}
+          </View>
+        )}
+
+        {option == "Overall" && (
+          <View>
+            {habits?.map((habit, index) => (
+              <>
+                <Pressable
+                  style={{
+                    marginVertical: 10,
+                    backgroundColor: habit.color,
+                    padding: 18,
+                    borderRadius: 24,
+                  }}
+                >
+                  <View
+                    key={index}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text style={{ fontSize: 18, fontWeight: "500" }}>
+                      {habit.title}
+                    </Text>
+                    <Text style={{ fontSize: 15 }}>{habit.repeatMode}</Text>
+                  </View>
+                </Pressable>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginHorizontal: 10,
+                  }}
+                >
+                  <Text>Completed On :</Text>
+                  <Text>{getCompletedDays(habit.completed).join(", ")}</Text>
+                </View>
+              </>
             ))}
           </View>
         )}
