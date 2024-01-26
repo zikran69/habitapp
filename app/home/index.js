@@ -6,7 +6,7 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -20,6 +20,7 @@ import {
   EvilIcons,
   AntDesign,
 } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 const index = () => {
   const [option, setOption] = useState("Today");
@@ -40,9 +41,11 @@ const index = () => {
     fetchHabits();
   }, []);
 
-  useEffect(() => {
-    fetchHabits();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchHabits();
+    }, []),
+  );
 
   const fetchHabits = async () => {
     try {
@@ -86,6 +89,24 @@ const index = () => {
     //filter habits for habit not completed "and or" habits not completed on current day
     return !habit.completed || !habit.completed[currentDay];
   });
+
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const deleteHabit = async () => {
+    try {
+      const habitId = selectedHabit._id;
+
+      const response = await axios.delete(
+        `http://192.168.100.14:3000/habits/${habitId}`,
+      );
+
+      if (response.status == 200) {
+        setHabits(response.data);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   return (
     <>
@@ -153,89 +174,161 @@ const index = () => {
 
         {/* maping habit that we fetch from db */}
 
-        {option == "Today" && filteredHabits?.length > 0 ? (
-          <View>
-            {filteredHabits?.map((item, index) => (
-              <Pressable
-                onLongPress={() => handleLongPress(item._id)}
-                key={index}
+        {option == "Today" &&
+          (filteredHabits?.length > 0 ? (
+            <View>
+              {filteredHabits?.map((item, index) => (
+                <Pressable
+                  onLongPress={() => handleLongPress(item._id)}
+                  key={index}
+                  style={{
+                    marginVertical: 10,
+                    backgroundColor: item?.color,
+                    padding: 12,
+                    borderRadius: 24,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontWeight: "500",
+                      color: "black",
+                      fontSize: 18,
+                    }}
+                  >
+                    {item?.title}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          ) : (
+            <View
+              style={{
+                marginTop: 150,
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "auto",
+              }}
+            >
+              <Image
+                style={{ width: 100, height: 100, resizeMode: "cover" }}
+                source={require("../../assets/empty.png")}
+              />
+              <Text
                 style={{
-                  marginVertical: 10,
-                  backgroundColor: item?.color,
-                  padding: 12,
-                  borderRadius: 24,
+                  textAlign: "center",
+                  fontSize: 20,
+                  fontWeight: "600",
+                  marginTop: 10,
+                }}
+              >
+                No Habits for today
+              </Text>
+
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 20,
+                  fontWeight: "600",
+                  marginTop: 20,
+                }}
+              >
+                Create one?
+              </Text>
+
+              <Pressable
+                onPress={() => router.push("/home/create")}
+                styles={{
+                  backgroundColor: "#0071c5",
+                  marginTop: 20,
+                  paddingHorizontal: 20,
+                  paddingVertical: 10,
+                  marginLeft: "auto",
+                  marginRight: "auto",
                 }}
               >
                 <Text
                   style={{
-                    textAlign: "center",
-                    fontWeight: "500",
-                    color: "black",
-                    fontSize: 18,
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    marginTop: 20,
+                    color: "#0071c5",
                   }}
                 >
-                  {item?.title}
+                  Create
                 </Text>
               </Pressable>
-            ))}
-          </View>
-        ) : (
-          <View
-            style={{
-              marginTop: 150,
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "auto",
-            }}
-          >
-            <Image
-              style={{ width: 100, height: 100, resizeMode: "cover" }}
-              source={require("../../assets/empty.png")}
-            />
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 20,
-                fontWeight: "600",
-                marginTop: 10,
-              }}
-            >
-              No Habits for today
-            </Text>
+            </View>
+          ))}
 
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 20,
-                fontWeight: "600",
-                marginTop: 20,
-              }}
-            >
-              Create one?
-            </Text>
-
-            <Pressable
-              onPress={() => router.push("/home/create")}
-              styles={{
-                backgroundColor: "#0071c5",
-                marginTop: 20,
-                paddingHorizontal: 20,
-                paddingVertical: 10,
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            >
-              <Text
+        {option == "Weekly" && (
+          <View>
+            {habits?.map((habit, index) => (
+              <Pressable
+                key={index}
                 style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  marginTop: 20,
-                  color: "#0071c5",
+                  marginVertical: 10,
+                  backgroundColor: habit.color,
+                  padding: 18,
+                  borderRadius: 24,
                 }}
               >
-                Create
-              </Text>
-            </Pressable>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Text style={{ fontSize: 18, fontWeight: "500" }}>
+                    {habit.title}
+                  </Text>
+                  <Text style={{ fontSize: 15 }}>{habit.repeatMode}</Text>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-evenly",
+                    marginVertical: 10,
+                  }}
+                >
+                  {days?.map((day, item) => {
+                    const isCompleted = habit.completed && habit.completed[day];
+
+                    return (
+                      <Pressable>
+                        <Text
+                          key={item}
+                          style={{
+                            color: day == currentDay ? "blue" : "white",
+                            fontSize: 16,
+                          }}
+                        >
+                          {day}
+                        </Text>
+                        {isCompleted ? (
+                          <FontAwesome
+                            name="circle"
+                            size={24}
+                            color="white"
+                            styles={{ marginTop: 12 }}
+                          />
+                        ) : (
+                          <Feather
+                            name="circle"
+                            size={24}
+                            color="white"
+                            styles={{ marginTop: 12 }}
+                          />
+                        )}
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </Pressable>
+            ))}
           </View>
         )}
       </ScrollView>
@@ -309,7 +402,7 @@ const index = () => {
             </Pressable>
 
             <Pressable
-              // onPress={deleteHabit}
+              onPress={deleteHabit}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
