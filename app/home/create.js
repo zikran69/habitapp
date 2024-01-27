@@ -2,6 +2,7 @@ import {
   Alert,
   ImageBackground,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -42,7 +43,7 @@ const create = () => {
       };
 
       const response = await axios.post(
-        "http://192.168.100.14:3000/habits",
+        "https://backendhabitapp.vercel.app/habits",
         habitDetails,
       );
       if (response.status === 200) {
@@ -58,7 +59,7 @@ const create = () => {
   return (
     <>
       <ImageBackground
-        source={require("../../assets/Bg2.jpg")}
+        source={require("../../assets/Bg1.jpg")}
         resizeMode="cover"
         style={styles.image}
       >
@@ -67,11 +68,11 @@ const create = () => {
             onPress={() => router.back()}
             name="arrow-back-circle-outline"
             size={30}
-            color="black"
+            color="#fffb26"
           />
 
           <Text style={styles.createText}>
-            Create <Text style={styles.habitText}>Habit</Text>
+            Create <Text style={styles.habitText}>Habit Title</Text>
           </Text>
           <TextInput
             value={title}
@@ -132,8 +133,10 @@ const create = () => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontSize: 18, fontWeight: "500" }}>Reminder</Text>
-            <Text style={{ fontSize: 18, fontWeight: "500", color: "#2774ae" }}>
+            <Text style={{ fontSize: 18, fontWeight: "800", color: "#fffb26" }}>
+              Reminder
+            </Text>
+            <Text style={{ fontSize: 18, fontWeight: "800", color: "#fffb26" }}>
               Yes
             </Text>
           </View>
@@ -160,18 +163,22 @@ export default create;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: "rgba(0, 0, 0, .2)",
   },
   image: {
     flex: 1,
     justifyContent: "center",
   },
   createText: {
-    fontSize: 20,
+    fontSize: 25,
     marginTop: 10,
+    fontWeight: "800",
+    color: "#fffb26",
   },
   habitText: {
-    fontSize: 20,
-    fontWeight: "500",
+    fontSize: 25,
+    fontWeight: "800",
+    color: "#fffb26",
   },
   titleInput: {
     width: "95%",
@@ -185,7 +192,8 @@ const styles = StyleSheet.create({
   },
   colorText: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "800",
+    color: "#fffb26",
   },
   colorContainer: {
     flexDirection: "row",
@@ -195,7 +203,8 @@ const styles = StyleSheet.create({
   },
   repeatText: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "800",
+    color: "#fffb26",
     marginTop: 10,
   },
   dwContainer: {

@@ -246,6 +246,7 @@ const index = () => {
                     fontSize: 20,
                     fontWeight: "600",
                     marginTop: 10,
+                    color: "white",
                   }}
                 >
                   No Habits for today
@@ -257,6 +258,7 @@ const index = () => {
                     fontSize: 20,
                     fontWeight: "600",
                     marginTop: 20,
+                    color: "white",
                   }}
                 >
                   Create one?
@@ -278,7 +280,7 @@ const index = () => {
                       fontSize: 20,
                       fontWeight: "bold",
                       marginTop: 20,
-                      color: "#0071c5",
+                      color: "white",
                     }}
                   >
                     Create
@@ -291,7 +293,7 @@ const index = () => {
             <View>
               {habits?.map((habit, index) => (
                 <Pressable
-                  key={index}
+                  key={habit.title}
                   style={{
                     marginVertical: 10,
                     backgroundColor: habit.color,
