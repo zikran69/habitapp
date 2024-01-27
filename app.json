@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       }
     },
-
+    "scheme": "habitapp",
     "web": {
       "favicon": "./assets/favicon.png"
     },

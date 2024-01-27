@@ -1,5 +1,6 @@
 import {
   Alert,
+  ImageBackground,
   Pressable,
   StyleSheet,
   Text,
@@ -55,86 +56,102 @@ const create = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Ionicons
-        onPress={() => router.back()}
-        name="arrow-back-circle-outline"
-        size={30}
-        color="black"
-      />
-
-      <Text style={styles.createText}>
-        Create <Text style={styles.habitText}>Habit</Text>
-      </Text>
-      <TextInput
-        value={title}
-        onChangeText={(text) => setTitle(text)}
-        style={styles.titleInput}
-        placeholder="Title"
-      />
-
-      <View style={styles.bodyCreate}>
-        <Text style={styles.colorText}>Color</Text>
-        <View style={styles.colorContainer}>
-          {color?.map((item, index) => (
-            <TouchableOpacity
-              onPress={() => setSelectedColor(item)}
-              key={index}
-              activeOpacity={0.5}
-            >
-              {/* mengubah bentuk tampilan warna saat di click */}
-              {selectedColor === item ? (
-                <AntDesign name="plussquare" size={30} color={item} />
-              ) : (
-                <FontAwesome name="circle" size={30} color={item} />
-              )}
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      <Text style={styles.repeatText}>Repeat</Text>
-      <View style={styles.dwContainer}>
-        <Pressable style={styles.dwButton}>
-          <Text style={{ textAlign: "center" }}>Daily</Text>
-        </Pressable>
-        <Pressable style={styles.dwButton}>
-          <Text style={{ textAlign: "center" }}>Weekly</Text>
-        </Pressable>
-      </View>
-
-      <Text style={styles.repeatText}>On These Days</Text>
-
-      <View style={styles.dayContainer}>
-        {days?.map((item, index) => (
-          <Pressable style={styles.dayButton} key={index} activeOpacity={0.5}>
-            <Text>{item}</Text>
-          </Pressable>
-        ))}
-      </View>
-
-      <View
-        style={{
-          marginTop: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
+    <>
+      <ImageBackground
+        source={require("../../assets/Bg2.jpg")}
+        resizeMode="cover"
+        style={styles.image}
       >
-        <Text style={{ fontSize: 18, fontWeight: "500" }}>Reminder</Text>
-        <Text style={{ fontSize: 18, fontWeight: "500", color: "#2774ae" }}>
-          Yes
-        </Text>
-      </View>
+        <View style={styles.container}>
+          <Ionicons
+            onPress={() => router.back()}
+            name="arrow-back-circle-outline"
+            size={30}
+            color="black"
+          />
 
-      <Pressable onPress={addHabit} style={styles.pressSave}>
-        <Text
-          style={{ textAlign: "center", color: "white", fontWeight: "bold" }}
-        >
-          SAVE
-        </Text>
-      </Pressable>
-    </View>
+          <Text style={styles.createText}>
+            Create <Text style={styles.habitText}>Habit</Text>
+          </Text>
+          <TextInput
+            value={title}
+            onChangeText={(text) => setTitle(text)}
+            style={styles.titleInput}
+            placeholder="Title"
+          />
+
+          <View style={styles.bodyCreate}>
+            <Text style={styles.colorText}>Color</Text>
+            <View style={styles.colorContainer}>
+              {color?.map((item, index) => (
+                <TouchableOpacity
+                  onPress={() => setSelectedColor(item)}
+                  key={index}
+                  activeOpacity={0.5}
+                >
+                  {/* mengubah bentuk tampilan warna saat di click */}
+                  {selectedColor === item ? (
+                    <AntDesign name="plussquare" size={30} color={item} />
+                  ) : (
+                    <FontAwesome name="circle" size={30} color={item} />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <Text style={styles.repeatText}>Repeat</Text>
+          <View style={styles.dwContainer}>
+            <Pressable style={styles.dwButton}>
+              <Text style={{ textAlign: "center" }}>Daily</Text>
+            </Pressable>
+            <Pressable style={styles.dwButton}>
+              <Text style={{ textAlign: "center" }}>Weekly</Text>
+            </Pressable>
+          </View>
+
+          <Text style={styles.repeatText}>On These Days</Text>
+
+          <View style={styles.dayContainer}>
+            {days?.map((item, index) => (
+              <Pressable
+                style={styles.dayButton}
+                key={index}
+                activeOpacity={0.5}
+              >
+                <Text>{item}</Text>
+              </Pressable>
+            ))}
+          </View>
+
+          <View
+            style={{
+              marginTop: 20,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: "500" }}>Reminder</Text>
+            <Text style={{ fontSize: 18, fontWeight: "500", color: "#2774ae" }}>
+              Yes
+            </Text>
+          </View>
+
+          <Pressable onPress={addHabit} style={styles.pressSave}>
+            <Text
+              style={{
+                textAlign: "center",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              SAVE
+            </Text>
+          </Pressable>
+        </View>
+      </ImageBackground>
+    </>
   );
 };
 
@@ -143,6 +160,10 @@ export default create;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center",
   },
   createText: {
     fontSize: 20,
