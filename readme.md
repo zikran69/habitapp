@@ -26,3 +26,26 @@ this mobile app is built with `cyberpunk` theme for tracking your consistancy to
 ---
 
 ### Backend: <a href="https://github.com/zikran69/backendhabitapp">Backend Over Here</a>
+---
+## Demo App View :
+
+
+
+https://github.com/zikran69/habitapp/assets/108022748/61005045-dbaa-4ebd-b1de-9f9976dad6c4
+
+---
+<br>
+
+## Credit :
+### Dont forget to :
+
+> npm install
+
+---
+
+Follow me :
+<br>
+
+[![image](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/asrarizikran/)  [![image](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/don_zikii/)  
+
+---
